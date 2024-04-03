@@ -1,128 +1,81 @@
-
-import axios from "axios";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import SelectSido from "./component/SelectSido";
+import SelectSiGunGu from "./component/SelectSiGunGu";
+import SelectEupMyeonDong from "./component/SelectEupMyeonDong";
 
 function App() {
-  const [sidoList, setSidoList] = useState([]);
-  const [selectedSido, setSelectedSido] = useState("");
-  const [siGunguList, setSiGunguList] = useState([]);
-  const [selectedSiGungu, setSelectedSiGungu] = useState("");
-  const [eupMyeonDongList, setEupMyeonDongList] = useState([]);
-  const [selectedEupMyeonDong, setSelectedEupMyeonDong] = useState("");
-  const [sidoName, setSidoName] = useState("");
-  const [siGunGuName, setSiGunGuName] = useState("");
-  const [eupMyeonDongName, setEupMyeonDongName] = useState("");
   const [createNameArray, setCreateNameArray] = useState([]);
-  useEffect(() => {
-    fetchSidoList();
-  }, [createNameArray]);
+  const [selectedSidoName, setSelectedSidoName] = useState("");
+  const [selectedSidoCode, setSelectedSidoCode] = useState("");
+  const [selectedSiGunGuName, setSelectedSiGunGuName] = useState("");
+  const [selectedSiGunGuCode, setSelectedSiGunGuCode] = useState("");
+  const [selectedEupMyeonDongName, setSelectedEupMyeonDongName] = useState("");
+  const [selectedEupMyeonDongCode, setSelectedEupMyeonDongCode] = useState("");
 
-  const fetchSidoList = () => {
-    axios.get("https://dev-admin.gongsiltoday.com/api/regions/si-do")
-      .then((res) => {
-        setSidoList(res.data.result);
-      })
-      .catch((error) => {
-        console.error("에러:", error);
-      });
+  const handleSidoChange = (code, name) => {
+    setSelectedSidoCode(code);
+    setSelectedSidoName(name);
+    setSelectedSiGunGuCode("");
+    setSelectedSiGunGuName("");
+    setSelectedEupMyeonDongCode("");
+    setSelectedEupMyeonDongName("");
   };
 
-  const fetchGunguList = (siDoCode) => {
-    axios.get(`https://dev-admin.gongsiltoday.com/api/regions/si-gun-gu/${siDoCode}`)
-      .then((res) => {
-        setSiGunguList(res.data.result);
-        setEupMyeonDongList([]);
-        setSelectedSiGungu("");
-      })
-      .catch((error) => {
-        console.error("에러:", error);
-      });
+  const handleSiGunGuChange = (code, name) => {
+    setSelectedSiGunGuCode(code);
+    setSelectedSiGunGuName(name);
+    setSelectedEupMyeonDongCode("");
+    setSelectedEupMyeonDongName("");
   };
 
-  const fetchEupMyeonDongList = (siGunGuCode) => {
-    axios.get(`https://dev-admin.gongsiltoday.com/api/regions/eup-myeon-dong/${siGunGuCode}`)
-      .then((res) => {
-        setEupMyeonDongList(res.data.result);
-      })
-      .catch((error) => {
-        console.error("에러:", error);
-      });
+  const handleEupMyeonDongChange = (code, name) => {
+    setSelectedEupMyeonDongCode(code);
+    setSelectedEupMyeonDongName(name);
   };
 
-  const handleSidoChange = (e) => {
-    const selectedSiDoCode = e.target.value;
-    const selectedSiDoName = e.target.options[e.target.selectedIndex].text;
-    setSelectedSido(selectedSiDoCode);
-    fetchGunguList(selectedSiDoCode);
-    setSidoName(selectedSiDoName);
+  const createValueTxts = () => {
+    setCreateNameArray([...createNameArray, { sido: selectedSidoName, siGunGu: selectedSiGunGuName, eupMyeonDong: selectedEupMyeonDongName }]);
+    setSelectedSidoName("");
+    setSelectedSidoCode("");
+    setSelectedSiGunGuName("");
+    setSelectedSiGunGuCode("");
+    setSelectedEupMyeonDongName("");
+    setSelectedEupMyeonDongCode("");
   };
 
-  const handleGunguChange = (e) => {
-    const selectedSiGunguCode = e.target.value;
-    const selectedSigunguName = e.target.options[e.target.selectedIndex].text;
-    setSelectedSiGungu(selectedSiGunguCode);
-    fetchEupMyeonDongList(selectedSiGunguCode);
-    setSiGunGuName(selectedSigunguName);
-  };
-
-  const handleEupMyeonDongChange = (e) => {
-    const selectedEupMyeonDong = e.target.value;
-    const selectedEupMyeonDongName = e.target.options[e.target.selectedIndex].text;
-    setSelectedEupMyeonDong(selectedEupMyeonDong);
-    setEupMyeonDongName(selectedEupMyeonDongName)
-  };
-
-  const createVlueTxts = () => {
-    setCreateNameArray([...createNameArray, { sido: sidoName, siGunGu: siGunGuName, eupMyeonDong: eupMyeonDongName }]);
-    setSelectedSido("");
-    setSiGunguList([]);
-    setEupMyeonDongList([]);
-    setSidoName("")
-    setSiGunGuName("")
-    setEupMyeonDongName("")
-   
-  };
   return (
     <div className="App">
       <label htmlFor="sido">시도 선택 : </label>
-      <select id="sido" value={selectedSido} onChange={handleSidoChange}>
-        <option value="">시도를 선택하세요</option>
-        {sidoList.map((sido) => (
-          <option key={sido.code} value={sido.code}>
-            {sido.name}
-          </option>
-        ))}
-      </select>
-      <select id="gungu" value={selectedSiGungu} onChange={handleGunguChange}>
-        <option value="">시군구를 선택하세요</option>
-        {siGunguList.map((gungu) => (
-          <option key={gungu.code} value={gungu.code}>
-            {gungu.name}
-          </option>
-        ))}
-      </select>
-      <select id="eupMyeonDong" value={selectedEupMyeonDong} onChange={handleEupMyeonDongChange}>
-        <option value="">읍면동을 선택하세요</option>
-        {eupMyeonDongList.map((eupMyeonDong) => (
-          <option key={eupMyeonDong.code} value={eupMyeonDong.code}>
-            {eupMyeonDong.name}
-          </option>
-        ))}
-      </select>
-      <button onClick={createVlueTxts}>추가</button>
+      <SelectSido
+        onChange={handleSidoChange}
+        selectedSidoCode={selectedSidoCode}
+        disabled={false}
+      />
+      <SelectSiGunGu
+        onChange={handleSiGunGuChange}
+        siDoCode={selectedSidoCode}
+        selectedSiGunGuCode={selectedSiGunGuCode}
+        disabled={!selectedSidoCode}
+      />
+      <SelectEupMyeonDong
+        onChange={handleEupMyeonDongChange}
+        siDoCode={selectedSidoCode}
+        siGunGuCode={selectedSiGunGuCode}
+        selectedEupMyeonDongCode={selectedEupMyeonDongCode}
+        disabled={!selectedSiGunGuCode}
+      />
+      <button onClick={createValueTxts}>추가</button>
       <div>
-        {createNameArray.map((name, ix) => (
-          <div key={ix}>
+        {createNameArray.map((name, index) => (
+          <div key={index}>
             <span>{name.sido}</span>
             <span>{name.siGunGu}</span>
             <span>{name.eupMyeonDong}</span>
           </div>
         ))}
       </div>
-
     </div>
   );
 }
 
 export default App;
-
