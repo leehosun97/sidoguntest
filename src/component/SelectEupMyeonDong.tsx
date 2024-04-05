@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { AreaInfoModel } from "../models/AreaInfoModel";
 
-export default function SelectEupMyeonDong({ onChange, siDoCode, siGunGuCode, selectedEupMyeonDongCode, disabled }) {
+export default function SelectEupMyeonDong({ onChange, siGunGuCode, selectedEupMyeonDongCode, disabled }:AreaInfoModel.ISiDoGunEupMyeonDongModel) {
   const [eupMyeonDongList, setEupMyeonDongList] = useState([]);
 
   useEffect(() => {
@@ -10,7 +11,7 @@ export default function SelectEupMyeonDong({ onChange, siDoCode, siGunGuCode, se
     }
   }, [siGunGuCode]);
 
-  const fetchEupMyeonDongList = (siGunGuCode) => {
+  const fetchEupMyeonDongList = (siGunGuCode:string) => {
     axios.get(`https://dev-admin.gongsiltoday.com/api/regions/eup-myeon-dong/${siGunGuCode}`)
       .then((res) => {
         setEupMyeonDongList(res.data.result);
@@ -20,7 +21,7 @@ export default function SelectEupMyeonDong({ onChange, siDoCode, siGunGuCode, se
       });
   };
 
-  const handleEupMyeonDongChange = (e) => {
+  const handleEupMyeonDongChange = (e:React.ChangeEvent<HTMLSelectElement>) => {
     const selectedEupMyeonDongCode = e.target.value;
     const selectedIndex = e.target.selectedIndex;
     const eupMyeonDongName = e.target.options[selectedIndex].text;
@@ -30,7 +31,7 @@ export default function SelectEupMyeonDong({ onChange, siDoCode, siGunGuCode, se
   return (
     <select onChange={handleEupMyeonDongChange} value={selectedEupMyeonDongCode} disabled={disabled}>
       <option value="">읍면동을 선택하세요</option>
-      {eupMyeonDongList.map((eupMyeonDong) => (
+      {eupMyeonDongList.map((eupMyeonDong:AreaInfoModel.IAreaListInfo) => (
         <option key={eupMyeonDong.code} value={eupMyeonDong.code}>
           {eupMyeonDong.name}
         </option>

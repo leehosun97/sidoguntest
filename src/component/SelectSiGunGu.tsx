@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-
-export default function SelectSiGunGu({ onChange, siDoCode, selectedSiGunGuCode, disabled }) {
+import { AreaInfoModel } from "../models/AreaInfoModel";
+export default function SelectSiGunGu({ onChange, siDoCode, selectedSiGunGuCode, disabled }: AreaInfoModel.ISiDoGunEupMyeonDongModel) {
+  
   const [siGunguList, setSiGunguList] = useState([]);
 
   useEffect(() => {
@@ -10,7 +11,7 @@ export default function SelectSiGunGu({ onChange, siDoCode, selectedSiGunGuCode,
     }
   }, [siDoCode]);
 
-  const fetchSiGunGuList = (siDoCode) => {
+  const fetchSiGunGuList = (siDoCode: string) => {
     axios.get(`https://dev-admin.gongsiltoday.com/api/regions/si-gun-gu/${siDoCode}`)
       .then((res) => {
         setSiGunguList(res.data.result);
@@ -20,7 +21,7 @@ export default function SelectSiGunGu({ onChange, siDoCode, selectedSiGunGuCode,
       });
   };
 
-  const handleSiGunGuChange = (e) => {
+  const handleSiGunGuChange = (e: any) => {
     const selectedSiGunGUCode = e.target.value;
     const selectedIndex = e.target.selectedIndex;
     const siGunGuName = e.target.options[selectedIndex].text;
@@ -30,7 +31,7 @@ export default function SelectSiGunGu({ onChange, siDoCode, selectedSiGunGuCode,
   return (
     <select onChange={handleSiGunGuChange} value={selectedSiGunGuCode} disabled={disabled}>
       <option value="">시군구를 선택하세요</option>
-      {siGunguList.map((gungu) => (
+      {siGunguList.map((gungu:AreaInfoModel.IAreaListInfo) => (
         <option key={gungu.code} value={gungu.code}>
           {gungu.name}
         </option>
